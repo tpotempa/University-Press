@@ -1,71 +1,83 @@
 package pl.edu.pwsztar.universitypress.model;
 
-import static javax.persistence.FetchType.EAGER;
-
+import java.io.Serializable;
+import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import org.hibernate.annotations.NaturalId;
 
-@Entity
-@NamedEntityGraph(name = "Book.authors",
-        attributeNodes = @NamedAttributeNode("authors")
-)
-@NamedEntityGraph(name = "Book.authors-categories",
-        attributeNodes = {
-                @NamedAttributeNode("authors"),
-                @NamedAttributeNode("categories")
-        }
-)
+@MappedSuperclass
+public abstract class Book implements Serializable {
 
-public class Book extends AbstractBook {
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    private String binding;
+    @NaturalId
+    private String isbn;
 
-    @ManyToMany(fetch = EAGER)
-    private List<Author> authors = new ArrayList<>();
+    private String title;
 
-    @ManyToMany
-    private Set<Category> categories = new LinkedHashSet<>();
+    private String description;
 
-    public Book() {
-    }
+    private LocalDate publishingDate;
 
-    public Book(String isbn, String title, String description, LocalDate publishingDate, String binding) {
-        super(isbn, title, description, publishingDate);
-        this.binding = binding;
-    }
-
-    public String getBinding() {
-        return binding;
-    }
-
-    public void setBinding(String binding) {
-        this.binding = binding;
-    }
-
-    @Override
-    public List<Author> getAuthors() {
-        return null;
-    }
-
-    @Override
-    public void setAuthors(List<Author> authors) {
+    protected Book() {
 
     }
 
-    @Override
-    public Set<Category> getCategories() {
-        return null;
+    protected Book(String isbn, String title, String description, LocalDate publishingDate) {
+        this.isbn = isbn;
+        this.title = title;
+        this.description = description;
+        this.publishingDate = publishingDate;
     }
 
-    @Override
-    public void setCategories(Set<Category> categories) {
+    public String getIsbn() {
+        return isbn;
+    }
 
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getPublishingDate() {
+        return publishingDate;
+    }
+
+    public void setPublishingDate(LocalDate publishingDate) {
+        this.publishingDate = publishingDate;
+    }
+
+    public abstract List<Author> getAuthors();
+
+    public abstract void setAuthors(List<Author> authors);
+
+    public abstract Set<Category> getCategories();
+
+    public abstract void setCategories(Set<Category> categories);
+
+    public String toString() {
+        return MessageFormat.format("Książka [ISBN={0}, Tytuł={1}, Opis={2}, Data wydania={3}]", isbn, title, description, publishingDate);
     }
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import pl.edu.pwsztar.universitypress.model.Book;
-import pl.edu.pwsztar.universitypress.repository.BookRepository;
+import pl.edu.pwsztar.universitypress.model.PaperBook;
+import pl.edu.pwsztar.universitypress.repository.PaperBookRepository;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -28,21 +27,21 @@ import pl.edu.pwsztar.universitypress.repository.BookRepository;
 public class BookController {
 
     final
-    BookRepository bookRepository;
+    PaperBookRepository paperBookRepository;
 
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(PaperBookRepository paperBookRepository) {
+        this.paperBookRepository = paperBookRepository;
     }
 
     @GetMapping("/universitypress")
-    public ResponseEntity<List<Book>> getAllBooks(@RequestParam(required = false) String title) {
+    public ResponseEntity<List<PaperBook>> getAllPaperBooks(@RequestParam(required = false) String title) {
         try {
-            List<Book> books = new ArrayList<Book>();
+            List<PaperBook> books = new ArrayList<PaperBook>();
 
             if (title == null)
-                bookRepository.findAll().forEach(books::add);
+                paperBookRepository.findAll().forEach(books::add);
             else
-                bookRepository.findByTitleContaining(title).forEach(books::add);
+                paperBookRepository.findByTitleContaining(title).forEach(books::add);
 
             if (books.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -55,8 +54,8 @@ public class BookController {
     }
 
     @GetMapping("/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable("id") long id) {
-        Optional<Book> bookData = bookRepository.findById(id);
+    public ResponseEntity<PaperBook> getBookById(@PathVariable("id") long id) {
+        Optional<PaperBook> bookData = paperBookRepository.findById(id);
 
         if (bookData.isPresent()) {
             return new ResponseEntity<>(bookData.get(), HttpStatus.OK);
@@ -66,26 +65,26 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+    public ResponseEntity<PaperBook> createBook(@RequestBody PaperBook paperBook) {
         try {
-            Book _book = bookRepository
-                    .save(new Book(book.getIsbn(), book.getTitle(), book.getDescription(), book.getPublishingDate(), book.getBinding()));
-            return new ResponseEntity<>(_book, HttpStatus.CREATED);
+            PaperBook book = paperBookRepository
+                    .save(new PaperBook(paperBook.getIsbn(), paperBook.getTitle(), paperBook.getDescription(), paperBook.getPublishingDate(), paperBook.getBinding()));
+            return new ResponseEntity<>(book, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/books/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable("id") long id, @RequestBody Book book) {
-        Optional<Book> bookData = bookRepository.findById(id);
+    public ResponseEntity<PaperBook> updateBook(@PathVariable("id") long id, @RequestBody PaperBook paperBook) {
+        Optional<PaperBook> bookData = paperBookRepository.findById(id);
 
         if (bookData.isPresent()) {
-            Book _book = bookData.get();
-            _book.setTitle(book.getTitle());
-            _book.setDescription(book.getDescription());
-            _book.setPublishingDate(book.getPublishingDate());
-            return new ResponseEntity<>(bookRepository.save(_book), HttpStatus.OK);
+            PaperBook book = bookData.get();
+            book.setTitle(paperBook.getTitle());
+            book.setDescription(paperBook.getDescription());
+            book.setPublishingDate(paperBook.getPublishingDate());
+            return new ResponseEntity<>(paperBookRepository.save(book), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -94,7 +93,7 @@ public class BookController {
     @DeleteMapping("/books/{id}")
     public ResponseEntity<HttpStatus> deleteBook(@PathVariable("id") long id) {
         try {
-            bookRepository.deleteById(id);
+            paperBookRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,7 +103,7 @@ public class BookController {
     @DeleteMapping("/books")
     public ResponseEntity<HttpStatus> deleteAllBooks() {
         try {
-            bookRepository.deleteAll();
+            paperBookRepository.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -113,9 +112,9 @@ public class BookController {
     }
 
     @GetMapping("/books/published")
-    public ResponseEntity<List<Book>> findByPublished() {
+    public ResponseEntity<List<PaperBook>> findByPublished() {
         try {
-            List<Book> books = bookRepository.findByPublishingDateBefore(LocalDate.now());
+            List<PaperBook> books = paperBookRepository.findByPublishingDateBefore(LocalDate.now());
 
             if (books.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

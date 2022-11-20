@@ -3,12 +3,12 @@ package pl.edu.pwsztar.universitypress.model;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.time.LocalDate;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import org.hibernate.annotations.NaturalId;
 
 @Entity
+@Table(name = "author")
 public class Author implements Serializable {
 
     @Id
@@ -16,6 +16,7 @@ public class Author implements Serializable {
     private Long id;
 
     @NaturalId
+    @Column(length = 50, nullable = false, unique = false)
     private String firstName;
     private String middleName;
     private String lastName;

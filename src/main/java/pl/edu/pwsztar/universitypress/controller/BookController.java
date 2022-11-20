@@ -36,7 +36,7 @@ public class BookController {
     @GetMapping("/universitypress")
     public ResponseEntity<List<PaperBook>> getAllPaperBooks(@RequestParam(required = false) String title) {
         try {
-            List<PaperBook> books = new ArrayList<PaperBook>();
+            List<PaperBook> books = new ArrayList<>();
 
             if (title == null)
                 paperBookRepository.findAll().forEach(books::add);

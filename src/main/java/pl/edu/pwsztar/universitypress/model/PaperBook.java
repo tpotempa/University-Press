@@ -1,5 +1,8 @@
 package pl.edu.pwsztar.universitypress.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import static javax.persistence.FetchType.EAGER;
 
 import java.time.LocalDate;
@@ -28,6 +31,7 @@ public class PaperBook extends Book {
     private String binding;
 
     @ManyToMany(fetch = EAGER)
+    @Fetch(FetchMode.JOIN)
     private List<Author> authors = new ArrayList<>();
 
     @ManyToMany

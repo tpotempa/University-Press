@@ -5,9 +5,9 @@ import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+
+import com.sun.istack.NotNull;
 import org.hibernate.annotations.NaturalId;
 
 @MappedSuperclass
@@ -20,6 +20,7 @@ public abstract class Book implements Serializable {
     @NaturalId
     private String isbn;
 
+    @NotNull
     private String title;
 
     private String description;
